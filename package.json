@@ -1,0 +1,25 @@
+{
+  "name": "pinch-pan-zoom",
+  "version": "0.0.1",
+  "description": "A Javascript library providing multi-touch gestures for zooming and dragging on any DOM element.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhudson8/pinchzoom.git"
+  },
+  "keywords": [
+    "image",
+    "zoom",
+    "pan",
+    "pinch"
+  ],
+  "author": "https://github.com/manuelstofer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jhudson8/pinchzoom/issues"
+  },
+  "homepage": "https://github.com/jhudson8/pinchzoom#readme"
+}
