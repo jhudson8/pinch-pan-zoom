@@ -99,7 +99,7 @@ module.exports = (function () {
                 };
                 this.options = Object.assign({}, this.defaults, options);
                 this.setupMarkup();
-                this.destroyBoundEvents = this.bindEvents();
+                this.bindEvents();
                 this.update();
                 // default enable.
                 this.enable();
@@ -573,7 +573,7 @@ module.exports = (function () {
                 if (this.el.nodeName === 'IMG') {
                   this.el.removeEventListener('load', this.update);
                 }
-                this.destroyBoundEvents();
+                this.destroyBoundGestures();
             },
 
             /**
@@ -581,7 +581,7 @@ module.exports = (function () {
              */
             bindEvents: function () {
                 var self = this;
-                detectGestures(this.container, this);
+                this.destroyBoundGestures = detectGestures(this.container, this);
 
                 window.addEventListener('resize', this.update);
                 Array.from(this.el.querySelectorAll('img')).forEach(function(imgEl) {

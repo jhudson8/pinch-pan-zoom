@@ -1,6 +1,6 @@
 {
   "name": "pinch-pan-zoom",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Javascript library providing multi-touch gestures for zooming and dragging on any DOM element.",
   "main": "index.js",
   "scripts": {
