@@ -88,6 +88,8 @@ module.exports = (function () {
          * @constructor
          */
         var PinchZoom = function (el, options) {
+                this.update = this.update.bind(this);
+
                 this.el = el;
                 this.zoomFactor = 1;
                 this.lastScale = 1;
@@ -97,11 +99,10 @@ module.exports = (function () {
                 };
                 this.options = Object.assign({}, this.defaults, options);
                 this.setupMarkup();
-                this.bindEvents();
+                this.destroyBoundEvents = this.bindEvents();
                 this.update();
                 // default enable.
                 this.enable();
-
             },
             sum = function (a, b) {
                 return a + b;
@@ -560,19 +561,35 @@ module.exports = (function () {
             },
 
             /**
+             * Remove all event bindings
+             */
+            destroy: function () {
+                var self = this;
+                window.removeEventListener('resize', this.update);
+                Array.from(this.el.querySelectorAll('img')).forEach(function(imgEl) {
+                  imgEl.removeEventListener('load', self.update);
+                });
+
+                if (this.el.nodeName === 'IMG') {
+                  this.el.removeEventListener('load', this.update);
+                }
+                this.destroyBoundEvents();
+            },
+
+            /**
              * Binds all required event listeners
              */
             bindEvents: function () {
                 var self = this;
                 detectGestures(this.container, this);
 
-                window.addEventListener('resize', this.update.bind(this));
+                window.addEventListener('resize', this.update);
                 Array.from(this.el.querySelectorAll('img')).forEach(function(imgEl) {
-                  imgEl.addEventListener('load', self.update.bind(self));
+                  imgEl.addEventListener('load', self.update);
                 });
 
                 if (this.el.nodeName === 'IMG') {
-                  this.el.addEventListener('load', this.update.bind(this));
+                  this.el.addEventListener('load', this.update);
                 }
             },
 
@@ -749,15 +766,16 @@ module.exports = (function () {
                 },
                 firstMove = true;
 
-            el.addEventListener('touchstart', function (event) {
+            function onTouchStart (event) {
                 if(target.enabled) {
                     firstMove = true;
                     fingers = event.touches.length;
                     detectDoubleTap(event);
                 }
-            });
+            }
+            el.addEventListener('touchstart', onTouchStart);
 
-            el.addEventListener('touchmove', function (event) {
+            function onTouchMove (event) {
                 if(target.enabled) {
                     if (firstMove) {
                         updateInteraction(event);
@@ -782,14 +800,23 @@ module.exports = (function () {
 
                     firstMove = false;
                 }
-            });
+            }
+            el.addEventListener('touchmove', onTouchMove);
 
-            el.addEventListener('touchend', function (event) {
+            function onTouchEnd (event) {
                 if(target.enabled) {
                     fingers = event.touches.length;
                     updateInteraction(event);
                 }
-            });
+            }
+            el.addEventListener('touchend', onTouchEnd);
+
+            // return destroy function
+            return function () {
+                el.removeEventListener('touchstart', onTouchStart);
+                el.removeEventListener('touchmove', onTouchMove);
+                el.removeEventListener('touchend', onTouchEnd);
+            }
         };
 
         return PinchZoom;
@@ -797,4 +824,3 @@ module.exports = (function () {
 
     return definePinchZoom();
 }).call(this);
-
